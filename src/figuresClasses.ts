@@ -1,4 +1,4 @@
-type Forms = 'triangule' | 'circle' | 'rectangle';
+type Forms = 'triangle' | 'circle' | 'rectangle';
 type Colors = 'red' | 'green' | 'blue';
 
 export interface Figure {
@@ -8,67 +8,67 @@ export interface Figure {
 }
 
 export class Triangle implements Figure {
-  forms: Forms = 'triangule';
+  public forms: Forms = 'triangle';
+  public colors: Colors;
 
-  colors: Colors;
-
-  constructor(a: number, b: number, c: number) {
+  constructor(
+    public a: number,
+    public b: number,
+    public c: number,
+    color: Colors
+  ) {
     if (a <= 0 || b <= 0 || c <= 0) {
       throw new Error('The sides of the triangle must be positive numbers.');
     }
 
     if (a + b <= c || a + c <= b || b + c <= a) {
-      throw new Error('The values ​​provided do not form a valid triangle.');
+      throw new Error('The values provided do not form a valid triangle.');
     }
+
+    this.colors = color;
   }
 
   getArea(): number {
-    const s = (a + b + c) / 2;
-
-    const areaTriangle = Math.sqrt(
-      s * (s - a) * (s - b) * (s - c),
-    );
-
+    const s = (this.a + this.b + this.c) / 2;
+    const areaTriangle = Math.sqrt(s * (s - this.a) * (s - this.b) * (s - this.c));
     return Math.round(areaTriangle * 100) / 100;
   }
 }
 
 export class Circle implements Figure {
-  forms: Forms = 'circle';
+  public forms: Forms = 'circle';
+  public colors: Colors;
 
-  colors: Colors;
-
-  constructor(raio: number) {
-    if (raio <= 0) {
+  constructor(public radius: number, color: Colors) {
+    if (radius <= 0) {
       throw new Error('The radius must be a positive number.');
     }
+    this.colors = color;
   }
 
   getArea(): number {
-    const areaCircle = Math.PI * Math.pow(raio, 2);
-
+    const areaCircle = Math.PI * Math.pow(this.radius, 2);
     return Math.round(areaCircle * 100) / 100;
   }
 }
 
 export class Rectangle implements Figure {
-  forms: Forms = 'rectangle';
+  public forms: Forms = 'rectangle';
+  public colors: Colors;
 
-  colors: Colors;
-
-  constructor(base: number, heigth: number) {
-    if (base <= 0 || heigth <= 0) {
+  constructor(public base: number, public height: number, color: Colors) {
+    if (base <= 0 || height <= 0) {
       throw new Error('The base and height must be positive numbers.');
     }
+    this.colors = color;
   }
 
   getArea(): number {
-    const areaRectangle = base * heigth;
-
+    const areaRectangle = this.base * this.height;
     return Math.round(areaRectangle * 100) / 100;
   }
 }
 
-export function getInfo(figure): string {
-  return `${figure.colors} ${figure.forms} ${figure.getArea()}`;
+export function getInfo(figure: Figure): string {
+  return `${figure.colors} ${figure.forms}-${figure.getArea()}`;
 }
