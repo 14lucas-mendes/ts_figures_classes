@@ -1,74 +1,103 @@
-type Forms = 'triangle' | 'circle' | 'rectangle';
-type Colors = 'red' | 'green' | 'blue';
+type Shape = 'triangle' | 'circle' | 'rectangle';
+type Color = 'red' | 'green' | 'blue';
 
 export interface Figure {
-  forms: Forms;
-  colors: Colors;
+  shape: Shape;
+  color: Color;
   getArea(): number;
 }
 
 export class Triangle implements Figure {
-  public forms: Forms = 'triangle';
-  public colors: Colors;
+  public shape: Shape = 'triangle';
+
+  public color: Color;
 
   constructor(
     public a: number,
     public b: number,
     public c: number,
-    color: Colors
+    color: Color,
   ) {
-    if (a <= 0 || b <= 0 || c <= 0) {
-      throw new Error('The sides of the triangle must be positive numbers.');
+    // Correção 1: Removido o ! da verificação
+    if ([a, b, c].some((side) => typeof side !== 'number' || isNaN(side))) {
+      throw new Error('All sides must be valid numbers');
     }
 
+    // Correção 2: Removido o ! da verificação de valores positivos
+    if ([a, b, c].some((side) => side <= 0)) {
+      throw new Error('All sides must be positive numbers');
+    }
+
+    // Validação da desigualdade triangular
     if (a + b <= c || a + c <= b || b + c <= a) {
-      throw new Error('The values provided do not form a valid triangle.');
+      throw new Error('Triangle inequality violated');
     }
 
-    this.colors = color;
+    this.color = color;
   }
 
   getArea(): number {
     const s = (this.a + this.b + this.c) / 2;
-    const areaTriangle = Math.sqrt(s * (s - this.a) * (s - this.b) * (s - this.c));
-    return Math.round(areaTriangle * 100) / 100;
+
+    return (
+      Math.round(
+        Math.sqrt(s * (s - this.a) * (s - this.b) * (s - this.c)) * 100,
+      ) / 100
+    );
   }
 }
 
 export class Circle implements Figure {
-  public forms: Forms = 'circle';
-  public colors: Colors;
+  public shape: Shape = 'circle';
 
-  constructor(public radius: number, color: Colors) {
+  public color: Color;
+
+  constructor(
+    public radius: number,
+    color: Color,
+  ) {
     if (radius <= 0) {
       throw new Error('The radius must be a positive number.');
     }
-    this.colors = color;
+    this.color = color;
   }
 
   getArea(): number {
     const areaCircle = Math.PI * Math.pow(this.radius, 2);
+
     return Math.round(areaCircle * 100) / 100;
   }
 }
 
 export class Rectangle implements Figure {
-  public forms: Forms = 'rectangle';
-  public colors: Colors;
+  public shape: Shape = 'rectangle';
 
-  constructor(public base: number, public height: number, color: Colors) {
-    if (base <= 0 || height <= 0) {
-      throw new Error('The base and height must be positive numbers.');
+  public color: Color;
+
+  constructor(
+    public base: number,
+    public height: number,
+    color: Color,
+  ) {
+    // Verifica se base é um número válido e positivo
+    if (typeof base !== 'number' || isNaN(base) || base <= 0) {
+      throw new Error(`Base must be a positive number. Received: ${base}`);
     }
-    this.colors = color;
+
+    // Verifica se height é um número válido e positivo
+    if (typeof height !== 'number' || isNaN(height) || height <= 0) {
+      throw new Error(`Height must be a positive number. Received: ${height}`);
+    }
+
+    this.color = color;
   }
 
   getArea(): number {
-    const areaRectangle = this.base * this.height;
-    return Math.round(areaRectangle * 100) / 100;
+    // Cálculo seguro, pois os valores já foram validados no construtor
+    return Math.round(this.base * this.height * 100) / 100;
   }
 }
 
 export function getInfo(figure: Figure): string {
-  return `${figure.colors} ${figure.forms}-${figure.getArea()}`;
+  return `${figure.color} ${figure.shape}-${figure.getArea()}`;
 }
