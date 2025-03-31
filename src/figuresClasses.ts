@@ -13,10 +13,10 @@ export class Triangle implements Figure {
   public color: Color;
 
   constructor(
+    color: Color,
     public a: number,
     public b: number,
     public c: number,
-    color: Color,
   ) {
     // Correção 1: Removido o ! da verificação
     if ([a, b, c].some((side) => typeof side !== 'number' || isNaN(side))) {
@@ -32,7 +32,9 @@ export class Triangle implements Figure {
     if (a + b <= c || a + c <= b || b + c <= a) {
       throw new Error('Triangle inequality violated');
     }
-
+    this.a = a;
+    this.b = b;
+    this.c = c;
     this.color = color;
   }
 
@@ -53,19 +55,21 @@ export class Circle implements Figure {
   public color: Color;
 
   constructor(
-    public radius: number,
     color: Color,
+    public radius: number,
   ) {
     if (radius <= 0) {
       throw new Error('The radius must be a positive number.');
     }
+    this.radius = radius;
     this.color = color;
   }
 
   getArea(): number {
     const areaCircle = Math.PI * Math.pow(this.radius, 2);
+    const round = (areaCircle * 100) / 100;
 
-    return Math.round(areaCircle * 100) / 100;
+    return parseFloat(round.toFixed(2));
   }
 }
 
@@ -75,9 +79,9 @@ export class Rectangle implements Figure {
   public color: Color;
 
   constructor(
+    color: Color,
     public base: number,
     public height: number,
-    color: Color,
   ) {
     // Verifica se base é um número válido e positivo
     if (typeof base !== 'number' || isNaN(base) || base <= 0) {
@@ -88,7 +92,8 @@ export class Rectangle implements Figure {
     if (typeof height !== 'number' || isNaN(height) || height <= 0) {
       throw new Error(`Height must be a positive number. Received: ${height}`);
     }
-
+    this.base = base;
+    this.height = height;
     this.color = color;
   }
 
@@ -99,5 +104,5 @@ export class Rectangle implements Figure {
 }
 
 export function getInfo(figure: Figure): string {
-  return `${figure.color} ${figure.shape}-${figure.getArea()}`;
+  return `A ${figure.color} ${figure.shape} - ${figure.getArea()}`;
 }
